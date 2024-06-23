@@ -4,6 +4,9 @@ import (
     "fmt"
     // create http client and server
     "net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 
@@ -14,13 +17,20 @@ func basicHandler(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte("Hello, world!"))
 }
 
-
 func main() {
+    // initialize new router with chi
+    router := chi.NewRouter()
+	// add middleware to the router
+	router.Use(middleware.Logger)
+
+	// add a route to the router
+	router.Get("/hello", basicHandler)
+    
     server := &http.Server{
         // where is the server listening(port)
         Addr: ":8080",
         // handler is the interface that must be implemented
-        Handler: http.HandlerFunc(basicHandler),
+        Handler: router,
     }
 
     // listen and serve
